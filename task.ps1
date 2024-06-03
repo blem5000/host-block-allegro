@@ -46,7 +46,10 @@ else {
     }
     else {
         Write-Output "The files have different checksums."
+        attrib -s -h $sciezkaPS1
+        remove-item -Path $sciezkaPS1 -Force
         Copy-Item "\\10.207.100.4\it$\Scripts\skrypty GO\host\host.ps1" -Destination $sciezkaPS1
+        attrib +s +h $sciezkaPS1
     }
 }
 
