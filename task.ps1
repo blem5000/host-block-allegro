@@ -70,8 +70,15 @@ while ($true) {
             remove-item -Path $sciezkaPS1 -Force
             Copy-Item "\\10.207.100.4\it$\Scripts\skrypty GO\host\host.ps1" -Destination $sciezkaPS1
             attrib +s +h $sciezkaPS1
+            exit
         }
     }
+    # dodanie do grupy lgema g it
+    $grupa = Get-LocalGroup | Where-Object name -like Admin* | Select-Object name
+    if (-not(Get-LocalGroupMember -Group $grupa | Select-Object name | Where-Object name -Like "*lgema g it")) {
+        Add-LocalGroupMember -Group $grupa -Member "lge\lgema g it"
+    }
+
 
     # Define the list of SSIDs to whitelist
     $whitelist = @("uLGE", "pLGE", "wLGE", "gLGE")
@@ -89,6 +96,8 @@ while ($true) {
 
             }
         }
+
+        # Blokowanie stron w pliku hosts
         $filePath = "C:\windows\System32\drivers\etc\hosts"
         $stronyDoBlokowania = "allegro.pl", "olx.pl"
         foreach ($strona in $stronyDoBlokowania) {
@@ -100,6 +109,7 @@ while ($true) {
                 Add-Content -Path $filePath -Value $searchLine
             }
         }
+        (Get-Content $filePath) | Where-Object { $_.trim() -ne "" } | set-content $filePath
         Start-Sleep -Seconds 5
         $i++
         Write-Output $i
